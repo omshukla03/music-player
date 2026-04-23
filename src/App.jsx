@@ -20,12 +20,12 @@ const AppContent = () => {
   }, [handleNext, handlePrev]);
 
   return (
-    <div className="flex h-screen w-full bg-black text-white overflow-hidden font-sans selection:bg-cyan-500/30">
+    <div className="flex h-screen w-full bg-white dark:bg-black text-neutral-900 dark:text-white overflow-hidden font-sans selection:bg-cyan-500/30 transition-colors duration-500">
       {/* Sidebar - Fixed width */}
       <Sidebar />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-neutral-900 via-[#050505] to-black relative">
+      <main className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-neutral-100 via-neutral-50 to-white dark:from-neutral-900 dark:via-[#050505] dark:to-black relative transition-colors duration-500">
         <Header />
         
         {/* Scrollable area */}
@@ -34,8 +34,8 @@ const AppContent = () => {
         </div>
       </main>
 
-      {/* Floating Bottom Player Bar */}
-      <div className="fixed bottom-4 left-72 right-4 w-[calc(100%-19rem)] xl:left-1/2 xl:-translate-x-1/2 xl:w-full xl:max-w-6xl bg-[#0a0a0a]/80 backdrop-blur-2xl border border-white/10 rounded-3xl h-[90px] px-6 z-50 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.8)] transition-all">
+      {/* Docked Bottom Player Bar */}
+      <div className="fixed bottom-0 left-[280px] right-0 bg-white/80 dark:bg-[#0a0a0a]/90 backdrop-blur-3xl border-t border-black/10 dark:border-white/10 h-[90px] px-8 z-50 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.8)] transition-colors duration-500">
         <PlayerControls />
       </div>
 

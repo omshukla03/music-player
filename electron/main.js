@@ -11,6 +11,7 @@ function createWindow() {
     title: "Beat Sync", 
     backgroundColor: "#0f0f0f", 
     autoHideMenuBar: true,
+    icon: path.join(__dirname, "..", "src", "assets", "logo.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"), 
       contextIsolation: true,  

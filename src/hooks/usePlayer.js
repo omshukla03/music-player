@@ -1,17 +1,33 @@
 import { useState, useRef, useEffect } from 'react';
 
-export const usePlayer = (currentSong, onEnded) => {
-  const audioRef = useRef(new Audio());
+const globalAudio = new Audio();
+
+export const usePlayer = (song, onNext, onPrev) => {
+  const audioRef = useRef(globalAudio);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(0.7); // Default volume 70%
+  const [volume, setVolume] = useState(0.7);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (currentSong) {
-      audio.src = currentSong;
+    if (song?.url) {
+      audio.src = song.url;
       if (isPlaying) audio.play();
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: song.title || 'Unknown Title',
+          artist: song.artist || 'Unknown Artist',
+          album: song.album || 'Unknown Album',
+          artwork: song.albumArt ? [{ src: song.albumArt, sizes: '512x512', type: 'image/png' }] : []
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => { audio.play(); setIsPlaying(true); });
+        navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); setIsPlaying(false); });
+        if (onNext) navigator.mediaSession.setActionHandler('nexttrack', onNext);
+        if (onPrev) navigator.mediaSession.setActionHandler('previoustrack', onPrev);
+      }
     }
 
     const setAudioData = () => setDuration(audio.duration);
@@ -19,14 +35,14 @@ export const usePlayer = (currentSong, onEnded) => {
 
     audio.addEventListener('loadeddata', setAudioData);
     audio.addEventListener('timeupdate', setAudioTime);
-    audio.addEventListener('ended', onEnded);
+    if (onNext) audio.addEventListener('ended', onNext);
 
     return () => {
       audio.removeEventListener('loadeddata', setAudioData);
       audio.removeEventListener('timeupdate', setAudioTime);
-      audio.removeEventListener('ended', onEnded);
+      if (onNext) audio.removeEventListener('ended', onNext);
     };
-  }, [currentSong]);
+  }, [song]);
 
   // Sync volume state with the actual audio element
   useEffect(() => {
